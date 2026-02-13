@@ -16,7 +16,7 @@ export default function App() {
     email: "philips.liemena@gmail.com"
   };
 
-  // Kategori lengkap sesuai permintaan awal
+  // Kategori Sidebar Lengkap
   const categories = [
     { id: 'database', label: 'Database', icon: <Database size={18} /> },
     { id: 'gateway', label: 'API Gateway', icon: <Globe size={18} /> },
@@ -25,7 +25,7 @@ export default function App() {
     { id: 'storage', label: 'Storage', icon: <Box size={18} /> },
   ];
 
-  // State Services dengan field yang lebih lengkap
+  // Data Default
   const [services, setServices] = useState([
     {
       id: 'db-1',
@@ -37,22 +37,18 @@ export default function App() {
       port: '4000',
       status: 'online',
       latency: '12ms'
-    },
-    {
-      id: 'git-1',
-      category: 'source',
-      name: 'Cloud Monitor',
-      provider: 'GitHub',
-      env: 'Main',
-      host: 'github.com/opalgas-oss',
-      port: 'HTTPS',
-      status: 'online',
-      latency: '8ms'
     }
   ]);
 
   const openModal = (node = null) => {
-    setEditingNode(node || { name: '', category: 'database', provider: '', env: 'Production', host: '', port: '' });
+    setEditingNode(node || { 
+      name: '', 
+      category: 'database', 
+      provider: 'TiDB Cloud (AWS)', 
+      env: 'Production', 
+      host: '', 
+      port: '4000' 
+    });
     setIsModalOpen(true);
   };
 
@@ -78,12 +74,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col md:flex-row font-sans">
       
-      {/* Sidebar - Sekarang dengan List Kategori Lengkap */}
+      {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full p-6">
           <div className="flex items-center gap-3 mb-10 text-indigo-600">
             <Layers size={28} />
-            <span className="text-xl font-black tracking-tighter">CLOUDSTACK</span>
+            <span className="text-xl font-black tracking-tighter uppercase">CloudStack</span>
           </div>
 
           <nav className="flex-1 space-y-1">
@@ -97,7 +93,7 @@ export default function App() {
 
           <div className="mt-auto pt-6 border-t border-slate-100 flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs font-mono">PL</div>
-            <div className="overflow-hidden">
+            <div className="overflow-hidden text-left">
               <p className="text-xs font-bold truncate">{userData.full_name}</p>
               <p className="text-[10px] text-slate-400 truncate">{userData.email}</p>
             </div>
@@ -129,16 +125,28 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.filter(s => s.category === activeTab).map(service => (
             <div key={service.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative group hover:shadow-xl hover:border-indigo-200 transition-all">
-              <div className="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openModal(service)} className="p-2 bg-slate-50 text-slate-400 rounded-lg hover:bg-indigo-50 hover:text-indigo-600"><Edit3 size={14} /></button>
-                <button onClick={() => deleteNode(service.id)} className="p-2 bg-slate-50 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-600"><Trash2 size={14} /></button>
-              </div>
-
+              
               <div className="flex justify-between items-start mb-6">
                 <div className="p-3 bg-slate-50 text-slate-600 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                   {categories.find(c => c.id === service.category)?.icon}
                 </div>
-                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-bold uppercase">{service.env}</span>
+                
+                {/* Bagian Environment & Tombol (Sesuai Permintaan) */}
+                <div className="flex flex-col items-end gap-2">
+                  <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-bold uppercase tracking-wider">
+                    {service.env}
+                  </span>
+                  
+                  {/* Tombol Aksi di Bawah Environment saat Hover */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button onClick={() => openModal(service)} className="p-1.5 bg-slate-50 text-slate-400 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 border border-slate-100">
+                      <Edit3 size={12} />
+                    </button>
+                    <button onClick={() => deleteNode(service.id)} className="p-1.5 bg-slate-50 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-600 border border-slate-100">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <h4 className="font-bold text-slate-800 text-sm leading-tight mb-1">{service.name}</h4>
@@ -146,12 +154,12 @@ export default function App() {
 
               <div className="space-y-2 pt-4 border-t border-slate-50">
                 <div className="flex justify-between text-[10px]">
-                  <span className="text-slate-400 font-medium">Endpoint</span>
-                  <span className="font-mono font-bold truncate ml-4 text-slate-700">{service.host}</span>
+                  <span className="text-slate-400 font-medium text-left">Endpoint</span>
+                  <span className="font-mono font-bold truncate ml-4 text-slate-700 text-right">{service.host}</span>
                 </div>
                 <div className="flex justify-between text-[10px]">
-                  <span className="text-slate-400 font-medium">Port</span>
-                  <span className="text-slate-700 font-bold font-mono">{service.port}</span>
+                  <span className="text-slate-400 font-medium text-left">Port</span>
+                  <span className="text-slate-700 font-bold font-mono text-right">{service.port}</span>
                 </div>
                 <div className="flex justify-between text-[10px] mt-2 bg-emerald-50/50 p-2 rounded-lg">
                   <span className="text-emerald-600 font-bold uppercase tracking-tighter flex items-center gap-1">
@@ -165,11 +173,11 @@ export default function App() {
         </div>
       </main>
 
-      {/* MODAL EDIT/ADD LENGKAP */}
+      {/* MODAL FORM (Mapping Select & Free Text) */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <form onSubmit={saveNode} className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200 border border-white/20">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <form onSubmit={saveNode} className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20">
+            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 text-left">
               <div className="flex items-center gap-3 text-indigo-600">
                 <Settings2 size={20} />
                 <h3 className="font-bold text-slate-800 tracking-tight text-lg">{editingNode.id ? 'Edit Connection' : 'Add New Node'}</h3>
@@ -177,37 +185,48 @@ export default function App() {
               <button type="button" onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-full transition-colors"><X size={18} /></button>
             </div>
             
-            <div className="p-8 space-y-5">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Display Name</label>
+            <div className="p-8 space-y-5 text-left">
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Display Name (Free Text)</label>
                 <input required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-medium" value={editingNode.name} onChange={e => setEditingNode({...editingNode, name: e.target.value})} placeholder="e.g. TiDB Cluster Connection" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Category</label>
-                  <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium outline-none" value={editingNode.category} onChange={e => setEditingNode({...editingNode, category: e.target.value})}>
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Category (List)</label>
+                  <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium outline-none cursor-pointer" value={editingNode.category} onChange={e => setEditingNode({...editingNode, category: e.target.value})}>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Environment</label>
-                  <input className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium" value={editingNode.env} onChange={e => setEditingNode({...editingNode, env: e.target.value})} placeholder="Production / Main" />
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Environment (List)</label>
+                  <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium outline-none cursor-pointer" value={editingNode.env} onChange={e => setEditingNode({...editingNode, env: e.target.value})}>
+                    <option value="Production">Production</option>
+                    <option value="Main">Main</option>
+                    <option value="Staging">Staging</option>
+                    <option value="Development">Development</option>
+                  </select>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Provider / Source</label>
-                <input className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium" value={editingNode.provider} onChange={e => setEditingNode({...editingNode, provider: e.target.value})} placeholder="TiDB Cloud / GitHub" />
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Provider / Platform (List)</label>
+                <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium outline-none cursor-pointer" value={editingNode.provider} onChange={e => setEditingNode({...editingNode, provider: e.target.value})}>
+                  <option value="TiDB Cloud (AWS)">TiDB Cloud (AWS)</option>
+                  <option value="GitHub">GitHub</option>
+                  <option value="Vercel">Vercel</option>
+                  <option value="AWS Elastic">AWS Elastic</option>
+                  <option value="Google Cloud">Google Cloud</option>
+                </select>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2 space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Internal Endpoint (Host)</label>
+                <div className="col-span-2 space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Host (Free Text)</label>
                   <input required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-mono font-bold" value={editingNode.host} onChange={e => setEditingNode({...editingNode, host: e.target.value})} placeholder="gateway.aws..." />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest">Port</label>
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1 tracking-widest block">Port (Free)</label>
                   <input className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-mono font-bold" value={editingNode.port} onChange={e => setEditingNode({...editingNode, port: e.target.value})} placeholder="4000" />
                 </div>
               </div>
